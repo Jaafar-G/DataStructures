@@ -80,8 +80,10 @@ linked_list_t* newList()
 // Function to check if list is empty
 // Preconditions:
 //  - takes in linked_list_t as param
+//  - 
 // Postconditions:
 //  - returns true if nodes are null
+//  - 
 bool isEmpty(linked_list_t* List)
 {
   if(List->head == NULL)
@@ -107,10 +109,8 @@ int getSize(linked_list_t* List)
 // Preconditions:
 //  - Node value must be an integer
 //  - 
-//  -
 // Postconditions:
 //  - Node will be added to the Beginning of the list
-//  - 
 //  - 
 void addNodeHead(linked_list_t* List, int value)
 {
@@ -126,8 +126,10 @@ void addNodeHead(linked_list_t* List, int value)
   {
     List->head = NewNode;
   }
-
-  if(List->head->next == NULL)
+  
+  // Access size instead of checking if the 
+  // List->head == NULL so no pointer dereference 
+  if(List->size == 0)
   {
     List->tail = NewNode;
   }
@@ -141,12 +143,8 @@ void addNodeHead(linked_list_t* List, int value)
 // Function to add a Node to Tail/End of List
 // Preconditions:
 //  - Node value must be an integer
-//  - 
-//  -
 // Postconditions:
 //  - Node will be added to the End of the list
-//  - 
-//  - 
 void addNodeTail(linked_list_t* List, int value)
 {
   node_t *NewNode = (node_t*)malloc(sizeof(node_t));
@@ -158,24 +156,51 @@ void addNodeTail(linked_list_t* List, int value)
   
   // Assign value taken as parameter to new node
   NewNode->value = value;
+  NewNode->next = NULL;
 
   // Check if this is the first node to be added
   if(isEmpty(List))
   {
     List->head = NewNode;
-  }
-
-  // Check if this is the second node to be added
-  if(List->head->next == NULL)
-  {
     List->tail = NewNode;
   }
 
-  List->tail->next = NewNode;
-  List->tail = NewNode;
-  List->tail->next = NULL;
+  else 
+  {  
+    List->tail->next = NewNode;
+    List->tail = NewNode;
+  }
+
   List->size++;
 }
+
+
+// Function to remove a Node to Head/Beginning of List
+// Preconditions:
+//  - Node value must be an integer
+//  - 
+//  -
+// Postconditions:
+//  - Node will be removed from the beginning of the list
+//  - 
+//  - 
+void removeNodeHead(linked_list_t* List)
+{
+  if(isEmpty(List))
+  {
+    printf("Couldnt remove head, list is empty!\n");
+  }
+
+  node_t *temp = (node_t*)malloc(sizeof(node_t));
+
+  temp = List->head;
+  List->head = List->head->next;
+
+  temp = NULL;
+  free(temp);
+  List->size--;
+}
+
 
 
 // Function that prints Node values of List
@@ -211,15 +236,23 @@ int main()
 
   printf("Empty(true): %d\n", isEmpty(List));
   printf("Adding nodes to list...\n");
-  addNodeTail(List, 4);
+
+  addNodeTail(List, 7);
   addNodeHead(List, 3);
-  addNodeHead(List, 2);
+  addNodeHead(List, 3);
   addNodeHead(List, 1);
-  addNodeTail(List, 5);
-  addNodeTail(List, 6);
+  addNodeHead(List, 99);
+
+  printList(List);
+
+  removeNodeHead(List);
+  
+  // Print results
   printf("List size: %d, Head: %d, Tail: %d\n", getSize(List), List->head->value, List->tail->value);
   printList(List);
   printf("Empty(false): %d\n", isEmpty(List));
+
+  free(List);
   
   return 0;
 }
