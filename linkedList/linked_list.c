@@ -6,7 +6,7 @@
 /**
 * File: linked_list.c
  * Author: Jaafar Gharib
- * Date: 12/25/2023
+ * Date: 12/28/2023
  *
  * Description:
  * This file contains the implementation of a basic singly linked list in C. 
@@ -41,6 +41,7 @@
  *   for use in production code.
  */
 
+
 // Defines node structure
 typedef struct node_t 
 {
@@ -69,11 +70,30 @@ typedef struct
 linked_list_t* newList()
 {
   linked_list_t *List = (linked_list_t*)malloc(sizeof(linked_list_t));
+  if (List == NULL) {
+    fprintf(stderr, "Failed to allocate memory for new node.\n");
+    return NULL;
+  }
+
+  // Set attributes for new list
+  // Size of new list should be 0, 
+  // and head & tail == NULL
   List->size = 0;
   List->head = NULL;
   List->tail = NULL;
 
   return List;
+}
+
+
+// Function that returns the size of a List
+// Preconditions:
+//  - takes in a list as a param
+// Postconditions:
+//  - returns number of nodes in list as int
+int getSize(linked_list_t* List)
+{
+  return List->size;
 }
 
 
@@ -86,22 +106,11 @@ linked_list_t* newList()
 //  - 
 bool isEmpty(linked_list_t* List)
 {
-  if(List->head == NULL)
+  if(List->size == 0)
   {
     return true;
   }
   return false;
-}
-
-
-// Function that returns the size of a List
-// Preconditions:
-//  - takes in a list as a param
-// Postconditions:
-//  - returns number of nodes in list as int
-int getSize(linked_list_t* List)
-{
-  return List->size;
 }
 
 
@@ -117,7 +126,7 @@ void addNodeHead(linked_list_t* List, int value)
   node_t *NewNode = (node_t*)malloc(sizeof(node_t));
   if (NewNode == NULL) {
     fprintf(stderr, "Failed to allocate memory for new node.\n");
-    exit(1);
+    return;
   }
 
   NewNode->value = value;
@@ -151,7 +160,7 @@ void addNodeTail(linked_list_t* List, int value)
   if(NewNode == NULL)
   {
     fprintf(stderr, "Failed to allocate memory for new node.\n");
-    exit(1);
+    return;
   }
   
   // Assign value taken as parameter to new node
@@ -179,28 +188,27 @@ void addNodeTail(linked_list_t* List, int value)
 // Preconditions:
 //  - Node value must be an integer
 //  - 
-//  -
 // Postconditions:
 //  - Node will be removed from the beginning of the list
-//  - 
 //  - 
 void removeNodeHead(linked_list_t* List)
 {
   if(isEmpty(List))
   {
     printf("Couldnt remove head, list is empty!\n");
+    return;
   }
 
-  node_t *temp = (node_t*)malloc(sizeof(node_t));
-
-  temp = List->head;
+  node_t *temp = List->head;
   List->head = List->head->next;
-
-  temp = NULL;
   free(temp);
+
+ if (isEmpty(List)) // If the list is now empty
+  {
+    List->tail = NULL; // Update tail to NULL
+  }
   List->size--;
 }
-
 
 
 // Function that prints Node values of List
@@ -242,9 +250,7 @@ int main()
   addNodeHead(List, 3);
   addNodeHead(List, 1);
   addNodeHead(List, 99);
-
   printList(List);
-
   removeNodeHead(List);
   
   // Print results
@@ -253,6 +259,5 @@ int main()
   printf("Empty(false): %d\n", isEmpty(List));
 
   free(List);
-  
   return 0;
 }
